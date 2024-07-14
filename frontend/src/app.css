@@ -1,0 +1,87 @@
+#app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #3A3153;
+  color: #fefdfd;
+}
+
+h1 {
+  font-size: 10rem;
+}
+
+h2 {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+}
+
+#ui {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#ui h2 {
+  margin: 5rem;
+  justify-content: center;
+  text-align: center;
+}
+
+ol {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top: 10px solid white;
+  border-bottom: 10px solid white;
+}
+
+li {
+  font-size: 4rem;
+  margin: 1rem;
+}
+
+#control-header {
+  padding: 1rem;
+  border-radius: 35px;
+  background-color: #271c45;
+  color: white;
+}
+
+#controls {
+  margin: 5rem;
+  align-items: center;
+  background-color: #271c45;
+  border: 10px solid black;
+  border-radius: 50px;
+}
+
+#game-variables {
+  background-color: #271c45;
+  border: 10px solid black;
+  border-radius: 50px;
+  margin: 1rem;
+}
+
+#scoring {
+  background-color: #271c45;
+  border: 10px solid black;
+  border-radius: 50px;
+  margin: 1rem;
+}
+
+#title {
+  background-color: #271c45;
+  border: 10px solid black;
+  border-radius: 50px;
+  margin: 5rem 0;
+}
+
+#title h1 {
+  margin: 4rem 0;
+  padding: 0 5rem;
+  text-align: center;
+}

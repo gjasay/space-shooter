@@ -1,4 +1,6 @@
+import { Lerp } from '../Lerp';
 import { Laser } from '../objects/Laser';
+import { Game } from '../scenes/Game';
 
 export class Player extends Phaser.Physics.Arcade.Sprite
 {
@@ -14,11 +16,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite
   acceleration: number = 0.25;
   deceleration: number = 0.15;
   rotationSpeed: number = 0.35;
+  //Shooting
   canShoot: boolean = true;
   reloadTime: number = 200;
+  ammo: number = 100;
+  //Health
+  health: number = 100;
 
 
-  constructor(scene: Phaser.Scene, x: number, y: number)
+
+  constructor(scene: Game, x: number, y: number)
   {
     super(scene, x, y, 'player_red');
     scene.add.existing(this);
@@ -39,15 +46,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite
       this.velocity -= (this.deceleration / 100) * deltaTime;
     }
     //Lerp the velocity to 0
-    this.velocity = lerp(this.velocity, 0, 0.001 * deltaTime);
+    this.velocity = Lerp.lerp(this.velocity, 0, 0.0007 * deltaTime);
     //Clamp values between 0 and 1
     this.velocity = Phaser.Math.Clamp(this.velocity, 0, 1);
-    //Clamp/Wrap the player position
+    //Wrap the player position
     if (this.y < 0) {
-      this.y = 0;
+      this.y = this.scene.cameras.main.height;
     }
     if (this.y > this.scene.cameras.main.height) {
-      this.y = this.scene.cameras.main.height;
+      this.y = 0;
     }
     if (this.x < 0 - this.width / 2) {
       this.x = this.scene.cameras.main.width;
@@ -71,17 +78,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite
     //Shoot
     if (this.keySpace.isDown && this.canShoot) {
       this.shoot();
-      
     }
   }
 
   shoot ()
   {
+    if (this.ammo <= 0) return;
+    this.ammo--;
     const directionX = Math.cos(-this.adjustedAngle * Phaser.Math.DEG_TO_RAD);
     const directionY = -Math.sin(-this.adjustedAngle * Phaser.Math.DEG_TO_RAD);
     //Create a new laser
     const laser = new Laser(this.scene, this.x + directionX * 75, this.y + directionY * 75);
-    this.scene.physics.add.existing(laser);
+    laser.create();
+    //@ts-expect-error The "Scene" is Game which contains this group
+    this.scene.lasers.add(laser);
+    //@ts-expect-error The "Scene" is Game which contains this method
+    this.scene.addEnemyCollision();
     //Set the angle of the laser to the player
     laser.setAngle(this.angle);
     laser.setScale(1);
@@ -99,8 +111,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite
 
     return laser;
   }
-}
 
-function lerp(start: number, end: number, t: number): number {
-  return start + t * (end - start);
+  updateHealth(amount: number)
+  {
+    this.health += amount;
+    if (this.health <= 0) {
+      //@ts-expect-error This method exists on "Game"
+      this.scene.changeScene('GameOver');
+    }
+  }
 }

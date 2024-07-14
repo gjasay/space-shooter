@@ -50,6 +50,8 @@ export class Preloader extends Scene
     // Lasers
     this.load.image('laser-blue', 'Lasers/laserBlue01.png');
     this.load.image('laser-red', 'Lasers/laserRed01.png');
+    // Meteors
+    this.load.image('brown-meteor', 'Meteors/meteorBrown_big1.png');
   }
 
   create()
@@ -58,6 +60,6 @@ export class Preloader extends Scene
     //  For example, you can define global animations here, so we can use them in other scenes.
 
     //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-    this.scene.start('Game');
+    this.scene.start('MainMenu');
   }
 }

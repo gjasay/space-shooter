@@ -29,6 +29,15 @@ export class GameOver extends Scene {
       .setOrigin(0.5)
       .setDepth(100);
 
+    //Play again button
+    const playAgainButton = this.add
+      .image(512, 384 + 100, 'blue-button')
+      .setInteractive()
+      .setDepth(100);
+    playAgainButton.on('pointerdown', () => {
+      this.changeScene();
+    });
+
     EventBus.emit('current-scene-ready', this);
   }
 
