@@ -1,36 +1,52 @@
 import { EventBus } from '../EventBus';
 import { Scene } from 'phaser';
+import { Player } from '../objects/Player';
+import { Enemy } from '../objects/Enemy';
 
 export class Game extends Scene
 {
-    camera: Phaser.Cameras.Scene2D.Camera;
-    background: Phaser.GameObjects.Image;
-    gameText: Phaser.GameObjects.Text;
+  camera: Phaser.Cameras.Scene2D.Camera;
+  background: Phaser.GameObjects.Image;
+  gameText: Phaser.GameObjects.Text;
+  player: Player;
+  enemy: Enemy;
 
-    constructor ()
-    {
-        super('Game');
-    }
+  constructor()
+  {
+    super('Game');
+  }
 
-    create ()
-    {
-        this.camera = this.cameras.main;
-        this.camera.setBackgroundColor(0x00ff00);
+  create()
+  {
+    this.camera = this.cameras.main;
+    this.background = this.add.image(this.camera.width / 2, this.camera.height / 2, 'darkPurple-bg');
+    this.background.setScale(Math.max(this.camera.width / this.background.width, this.camera.height / this.background.height)).setScrollFactor(0);
+    this.player = new Player(this, 100, this.camera.height - 75);
+    this.enemy = new Enemy(this, 100, 100);
+    this.physics.add.existing(this.player);
+    this.physics.add.existing(this.enemy);
+    //Keys
+    if (!this.input.keyboard) return;
+    this.player.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.player.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.player.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    this.player.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.player.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    //Collisions
+    this.physics.add.collider(this.player, this.enemy, () => {
+      this.enemy.setAlpha(0);
+    });
+    EventBus.emit('current-scene-ready', this);
+  }
 
-        this.background = this.add.image(512, 384, 'background');
-        this.background.setAlpha(0.5);
+  update(_time: number, delta: number) 
+  {
+    if (this.enemy) this.enemy.update();
+    this.player.movement(delta);
+  }
 
-        this.gameText = this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
-
-        EventBus.emit('current-scene-ready', this);
-    }
-
-    changeScene ()
-    {
-        this.scene.start('GameOver');
-    }
+  changeScene()
+  {
+    this.scene.start('GameOver');
+  }
 }
